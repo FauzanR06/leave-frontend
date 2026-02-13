@@ -1,15 +1,35 @@
 requireAuth();
 setUserInfo();
 
-function loadAllLeaves() {
-  apiGetAllLeaves()
+// Get userId from URL query parameter
+const urlParams = new URLSearchParams(window.location.search);
+const userId = urlParams.get('id');
+
+if (!userId) {
+  alert('Employee ID is required');
+  window.location.href = 'admin.html';
+}
+
+let employeeData = null;
+
+function loadEmployeeDetail() {
+  apiGetEmployeeLeaves(userId)
     .then(data => {
+      if (data.length > 0) {
+        employeeData = data[0];
+        displayEmployeeInfo(employeeData.user || {});
+      }
       renderStats(data);
       renderTable(data);
     })
     .catch(err => {
       alert(err.message);
     });
+}
+
+function displayEmployeeInfo(user) {
+  document.getElementById("employeeName").textContent = user.name || 'N/A';
+  document.getElementById("employeeId").textContent = user.id || 'N/A';
 }
 
 function renderStats(data) {
@@ -25,13 +45,13 @@ function renderStats(data) {
 }
 
 function renderTable(data) {
-  const table = document.getElementById("adminTable");
+  const table = document.getElementById("detailTable");
   table.innerHTML = "";
 
   if (data.length === 0) {
     table.innerHTML = `
       <tr>
-        <td colspan="6">
+        <td colspan="7">
           <div class="empty-state">
             <div class="empty-state-icon">📭</div>
             <div class="empty-state-text">No leave requests found</div>
@@ -43,17 +63,13 @@ function renderTable(data) {
 
   data.forEach(l => {
     const isPending = l.status.toUpperCase() === "PENDING";
-    const userId = l.user ? l.user.id : '';
     table.innerHTML += `
       <tr>
         <td><strong>#${l.id}</strong></td>
-        <td>
-          <a href="employee-detail.html?id=${userId}" class="text-decoration-none fw-semibold">
-            ${l.user ? l.user.name : 'N/A'}
-          </a>
-        </td>
-        <td>${l.start_date} → ${l.end_date}</td>
+        <td>${l.start_date}</td>
+        <td>${l.end_date}</td>
         <td>${l.total_days} day${l.total_days > 1 ? 's' : ''}</td>
+        <td>${l.reason || '—'}</td>
         <td>${getStatusBadge(l.status)}</td>
         <td>
           ${
@@ -73,14 +89,18 @@ function renderTable(data) {
 
 function approve(id) {
   apiApproveLeave(id)
-    .then(() => loadAllLeaves())
+    .then(() => loadEmployeeDetail())
     .catch(err => alert(err.message));
 }
 
 function reject(id) {
   apiRejectLeave(id)
-    .then(() => loadAllLeaves())
+    .then(() => loadEmployeeDetail())
     .catch(err => alert(err.message));
 }
 
-loadAllLeaves();
+function goBack() {
+  window.location.href = 'admin.html';
+}
+
+loadEmployeeDetail();

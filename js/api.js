@@ -94,3 +94,11 @@ function apiRejectLeave(id) {
   })
   .then(handleResponse);
 }
+
+// Get leaves by employee ID
+function apiGetEmployeeLeaves(userId) {
+  return fetch(`${API_URL}/leave-requests/employee/${userId}`, {
+    headers: authHeaders()
+  })
+  .then(handleResponse);
+}
