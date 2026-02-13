@@ -1,0 +1,97 @@
+/* Sidebar & Layout - custom CSS yang tidak ada di Bootstrap */
+:root {
+  --sidebar-width: 250px;
+  --navbar-height: 60px;
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: #212529;
+  z-index: 1040;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease;
+}
+
+.sidebar .nav-link {
+  color: rgba(255,255,255,0.7);
+  padding: 10px 20px;
+  font-size: 14px;
+  border-radius: 6px;
+  margin: 2px 10px;
+}
+
+.sidebar .nav-link:hover {
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+}
+
+.sidebar .nav-link.active {
+  background: rgba(13,110,253,0.25);
+  color: #fff;
+}
+
+/* Navbar */
+.navbar-top {
+  position: fixed;
+  top: 0;
+  left: var(--sidebar-width);
+  right: 0;
+  height: var(--navbar-height);
+  z-index: 1030;
+}
+
+/* Main Content */
+.main-content {
+  margin-left: var(--sidebar-width);
+  margin-top: var(--navbar-height);
+  padding: 24px;
+  min-height: calc(100vh - var(--navbar-height));
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1035;
+}
+
+.sidebar-overlay.active {
+  display: block;
+}
+
+/* Login */
+.login-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #212529, #0d6efd);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .navbar-top {
+    left: 0;
+  }
+  .main-content {
+    margin-left: 0;
+  }
+  .btn-hamburger {
+    display: inline-block !important;
+  }
+}
